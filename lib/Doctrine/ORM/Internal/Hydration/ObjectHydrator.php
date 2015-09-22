@@ -435,6 +435,9 @@ class ObjectHydrator extends AbstractHydrator
                         // we refresh the entity or its an unitialized proxy.
                         if (isset($nonemptyComponents[$dqlAlias])) {
                             $element = $this->getEntity($data, $dqlAlias);
+                            if ($reflFieldValue && ($reflFieldValue instanceof Proxy) && ($element->getId() != $reflFieldValue->getId())) {
+                                throw new \RuntimeException("Replacing association with entity with modified id");
+                            }
                             $reflField->setValue($parentObject, $element);
                             $this->_uow->setOriginalEntityProperty($oid, $relationField, $element);
                             $targetClass = $this->_metadataCache[$relation['targetEntity']];
